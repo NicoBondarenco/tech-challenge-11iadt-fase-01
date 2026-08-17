@@ -219,3 +219,17 @@ __marimo__/
 /.idea/
 /annotations/
 .ipynb_checkpoints/
+
+# Dataset pesado - não versionar
+data/img/
+
+# Checkpoints intermediários do modelo
+models/mobilenetv2_cbis_ddsm_fine_tune_best.keras
+models/mobilenetv2_cbis_ddsm_last.keras
+
+# Arquivo compactado temporário
+src.zip
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
