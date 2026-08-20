@@ -17,17 +17,15 @@ struct ContentView: View {
     @State private var errorMessage = ""
     
     let modelOptions: [(label: String, endpoint: String)] = [
-        ("KNN", "/predict/knn"),
-        ("Random Forest", "/predict/random_forest"),
-        ("Decision Tree PCA", "/predict/decision_tree_pca"),
-        ("KNN PCA", "/predict/knn_pca"),
         ("Logistic Regression", "/predict/logistic_regression"),
         ("Logistic Regression PCA", "/predict/logistic_regression_pca"),
+        ("Random Forest", "/predict/random_forest"),
         ("Random Forest PCA", "/predict/random_forest_pca"),
-        ("SVM PCA", "/predict/svm_pca")
+        ("KNN", "/predict/knn"),
+        ("KNN PCA", "/predict/knn_pca")
     ]
 
-    @State private var selectedModelEndpoint: String = "/predict/knn"
+    @State private var selectedModelEndpoint: String = "/predict/logistic_regression"
 
     var body: some View {
         NavigationView {

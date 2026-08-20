@@ -11,14 +11,12 @@ from sklearn.preprocessing import RobustScaler
 app = FastAPI()
 
 MODEL_FILES = {
-    "random_forest": "model_random_forest.pkl",
-    "decision_tree_pca": "model_decision_tree_pca.pkl",
-    "knn": "model_knn.pkl",
-    "knn_pca": "model_knn_pca.pkl",
     "logistic_regression": "model_logistic_regression.pkl",
     "logistic_regression_pca": "model_logistic_regression_pca.pkl",
+    "random_forest": "model_random_forest.pkl",
     "random_forest_pca": "model_random_forest_pca.pkl",
-    "svm_pca": "model_svm_pca.pkl",
+    "knn": "model_knn.pkl",
+    "knn_pca": "model_knn_pca.pkl"
 }
 
 FEATURE_COLUMNS = [
