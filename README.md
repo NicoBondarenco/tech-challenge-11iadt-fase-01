@@ -1,22 +1,38 @@
 # 🧬 Tech Challenge — Fase 1
 ## Análise e Classificação de Câncer de Mama
 
+<<<<<<< HEAD
 Projeto desenvolvido como parte do **Tech Challenge** da Pós-Graduação em IA para Devs da FIAP, turma 11IADT, com foco em **Análise Exploratória de Dados (EDA)**, **Machine Learning** e entrega de uma solução completa para predição de câncer de mama.
 
 O projeto utiliza o dataset **Wisconsin Diagnostic Breast Cancer (WDBC)** para explorar, preparar e modelar dados relacionados à classificação de tumores como **benignos** ou **malignos**. A solução inclui notebook de análise, modelos treinados, uma API em **FastAPI** e um cliente em **Swift / SwiftUI**.
 
 > ⚠️ **Aviso académico:** este projeto tem finalidade educacional e experimental. Os modelos desenvolvidos não substituem diagnóstico médico profissional.
+=======
+Projeto desenvolvido como parte do **Tech Challenge** da Pós-Graduação em IA para Devs da FIAP, com foco em **Análise Exploratória de Dados (EDA)** e **Machine Learning para classificação de câncer de mama**.
+
+O projeto utiliza o dataset **Wisconsin Diagnostic Breast Cancer (WDBC)** para explorar, preparar e modelar dados relacionados à classificação de tumores como **benignos** ou **malignos**.
+
+> ⚠️ **Aviso:** este projeto possui finalidade acadêmica e experimental. Os modelos desenvolvidos não constituem uma ferramenta de diagnóstico médico.
+>>>>>>> 81e80b9a6a6cf8682f65d0619458de9fba6343da
 
 ---
 
 ## 🎯 Objetivo
 
+<<<<<<< HEAD
 O objetivo do projeto é desenvolver e comparar modelos de Machine Learning capazes de classificar amostras em duas categorias:
+=======
+O objetivo deste projeto é desenvolver e comparar modelos de Machine Learning capazes de classificar amostras em duas categorias:
+>>>>>>> 81e80b9a6a6cf8682f65d0619458de9fba6343da
 
 - **B — Benigno**
 - **M — Maligno**
 
+<<<<<<< HEAD
 As etapas principais incluem:
+=======
+O notebook percorre as principais etapas de um projeto de Machine Learning, incluindo:
+>>>>>>> 81e80b9a6a6cf8682f65d0619458de9fba6343da
 
 - exploração dos dados;
 - análise da qualidade dos dados;
@@ -27,7 +43,12 @@ As etapas principais incluem:
 - avaliação das métricas;
 - comparação dos resultados;
 - análise da matriz de confusão;
+<<<<<<< HEAD
 - experimentação com redução de dimensionalidade usando PCA.
+=======
+- experimentação com redução de dimensionalidade utilizando PCA.
+
+>>>>>>> 81e80b9a6a6cf8682f65d0619458de9fba6343da
 
 ---
 
@@ -38,17 +59,25 @@ O projeto utiliza o dataset **Wisconsin Diagnostic Breast Cancer (WDBC)**.
 Arquivo utilizado:
 
 ```text
+<<<<<<< HEAD
 data/breast-cancer-wisconsin-data.csv
+=======
+breast-cancer-wisconsin-data.csv
+>>>>>>> 81e80b9a6a6cf8682f65d0619458de9fba6343da
 ```
 
 Fonte: [https://www.kaggle.com/datasets/uciml/breast-cancer-wisconsin-data/data](https://www.kaggle.com/datasets/uciml/breast-cancer-wisconsin-data/data)
 
+<<<<<<< HEAD
 Durante o pré-processamento, colunas como `id` e `Unnamed: 32` são removidas. A variável `diagnosis` é convertida para representação binária:
 
 ```text
 B → 0
 M → 1
 ```
+=======
+O notebook realiza o carregamento do dataset utilizando o Pandas e conduz a análise exploratória antes das etapas de modelagem.
+>>>>>>> 81e80b9a6a6cf8682f65d0619458de9fba6343da
 
 ---
 
@@ -65,7 +94,35 @@ A análise contempla:
 - análise das variáveis numéricas;
 - visualizações e correlações.
 
+<<<<<<< HEAD
 A divisão dos dados foi feita com:
+=======
+Durante o pré-processamento, as colunas `id` e `Unnamed: 32` são removidas.
+
+A variável `diagnosis` é convertida para representação binária:
+
+```text
+B → 0
+M → 1
+```
+
+O notebook utiliza `LabelEncoder` para realizar essa transformação. :contentReference[oaicite:3]{index=3}
+
+---
+
+## 🧹 Pré-processamento
+
+As principais etapas de preparação dos dados são:
+
+1. Remoção de colunas desnecessárias;
+2. Codificação da variável alvo;
+3. Separação entre features (`X`) e variável alvo (`y`);
+4. Divisão entre treino e teste;
+5. Padronização das features;
+6. Experimentação com diferentes estratégias de escalonamento.
+
+A divisão dos dados utiliza:
+>>>>>>> 81e80b9a6a6cf8682f65d0619458de9fba6343da
 
 ```python
 train_test_split(
@@ -77,6 +134,7 @@ train_test_split(
 )
 ```
 
+<<<<<<< HEAD
 Assim, 80% dos dados são usados para treino e 20% para teste, preservando a proporção das classes.
 
 ---
@@ -101,10 +159,18 @@ A solução compara principalmente:
 ---
 
 ## 🤖 Modelos Avaliados
+=======
+Assim, são utilizados 80% dos dados para treinamento e 20% para teste, preservando a proporção das classes.
+
+---
+
+## 🤖 Modelos
+>>>>>>> 81e80b9a6a6cf8682f65d0619458de9fba6343da
 
 Foram avaliados três algoritmos de classificação:
 
 ### Logistic Regression
+<<<<<<< HEAD
 Modelo de classificação linear utilizado como baseline.
 
 ### K-Nearest Neighbors (KNN)
@@ -114,12 +180,30 @@ Algoritmo baseado na proximidade entre as observações.
 Modelo baseado em um conjunto de árvores de decisão.
 
 Os modelos são implementados com `scikit-learn`.
+=======
+
+Modelo de classificação linear utilizado como baseline para comparação.
+
+### K-Nearest Neighbors (KNN)
+
+Algoritmo baseado na proximidade entre as observações.
+
+### Random Forest
+
+Modelo baseado em um conjunto de árvores de decisão.
+
+Os três modelos são implementados utilizando o `scikit-learn`. 
+>>>>>>> 81e80b9a6a6cf8682f65d0619458de9fba6343da
 
 ---
 
 ## 📏 Métricas
 
+<<<<<<< HEAD
 Os modelos foram avaliados por:
+=======
+Os modelos foram avaliados utilizando:
+>>>>>>> 81e80b9a6a6cf8682f65d0619458de9fba6343da
 
 - Accuracy
 - Precision
@@ -129,11 +213,42 @@ Os modelos foram avaliados por:
 - Matriz de Confusão
 - Classification Report
 
+<<<<<<< HEAD
+=======
+As métricas são calculadas utilizando ferramentas do módulo `sklearn.metrics`.
+
+---
+
+## 🧪 StandardScaler, RobustScaler e PCA
+
+O projeto também compara diferentes estratégias de preparação dos dados.
+
+A abordagem principal utiliza `StandardScaler`.
+
+Também foi testada uma abordagem utilizando:
+
+```text
+RobustScaler
+      ↓
+PCA
+      ↓
+Modelo de classificação
+```
+
+O objetivo é analisar o impacto do escalonamento robusto e da redução de dimensionalidade sobre o desempenho dos modelos.
+
+>>>>>>> 81e80b9a6a6cf8682f65d0619458de9fba6343da
 ---
 
 ## 📈 Resultados
 
+<<<<<<< HEAD
 Os resultados do notebook indicam desempenho muito alto para os modelos avaliados, com destaque para o **Random Forest sem PCA**.
+=======
+Os resultados apresentados no notebook indicam um desempenho elevado dos modelos avaliados. Entre eles, o Random Forest sem PCA apresentou os melhores resultados e, por isso, foi selecionado como o modelo principal para dar continuidade às análises e aos desenvolvimentos.
+
+O **Random Forest sem PCA** apresentou:
+>>>>>>> 81e80b9a6a6cf8682f65d0619458de9fba6343da
 
 | Métrica | Resultado |
 |---|---:|
@@ -143,7 +258,11 @@ Os resultados do notebook indicam desempenho muito alto para os modelos avaliado
 | F1 Score | 96,30% |
 | ROC-AUC | 99,29% |
 
+<<<<<<< HEAD
 Matriz de confusão do modelo principal:
+=======
+A matriz de confusão do Random Forest apresentou:
+>>>>>>> 81e80b9a6a6cf8682f65d0619458de9fba6343da
 
 |  | Predito B | Predito M |
 |---|---:|---:|
@@ -161,16 +280,23 @@ Isso corresponde a:
 
 ## 🛠️ Tecnologias
 
+<<<<<<< HEAD
 O projeto foi desenvolvido em **Python** e inclui:
+=======
+O projeto foi desenvolvido em **Python** utilizando:
+>>>>>>> 81e80b9a6a6cf8682f65d0619458de9fba6343da
 
 - [NumPy](https://numpy.org/)
 - [Pandas](https://pandas.pydata.org/)
 - [Matplotlib](https://matplotlib.org/)
 - [Seaborn](https://seaborn.pydata.org/)
 - [Scikit-learn](https://scikit-learn.org/)
+<<<<<<< HEAD
 - [FastAPI](https://fastapi.tiangolo.com/)
 - [Uvicorn](https://www.uvicorn.org/)
 - [Swift / SwiftUI](https://developer.apple.com/xcode/swiftui/)
+=======
+>>>>>>> 81e80b9a6a6cf8682f65d0619458de9fba6343da
 
 ---
 
@@ -178,6 +304,7 @@ O projeto foi desenvolvido em **Python** e inclui:
 
 ```text
 tech-challenge-11iadt-fase-01/
+<<<<<<< HEAD
 ├── LICENSE
 ├── README.md
 ├── requirements.txt
@@ -197,10 +324,23 @@ tech-challenge-11iadt-fase-01/
 ├── tests/
 │   └── test_main.py
 └── .venv/                       # ambiente virtual local (opcional)
+=======
+│
+├── notebooks/
+│   └── tech_challenge_fase1.ipynb
+├── datasets/
+│   └── breast-cancer-wisconsin-data.csv
+│
+├── README.md
+│
+└── requirements.txt
+...
+>>>>>>> 81e80b9a6a6cf8682f65d0619458de9fba6343da
 ```
 
 ---
 
+<<<<<<< HEAD
 ## 🧰 Como configurar o ambiente
 
 ### 1. Pré-requisitos
@@ -315,11 +455,59 @@ pytest
 ## 📓 Notebook
 
 O notebook principal está em:
+=======
+## 🚀 Como executar
+
+### 1. Clone o repositório
+
+```bash
+git clone https://github.com/NicoBondarenco/tech-challenge-11iadt-fase-01.git
+```
+
+### 2. Entre na pasta
+
+```bash
+cd tech-challenge-11iadt-fase-01
+```
+
+### 3. Crie um ambiente virtual
+
+No Windows:
+
+```bash
+python -m venv .venv
+```
+
+### 4. Ative o ambiente virtual
+
+PowerShell:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+Caso esteja utilizando o CMD:
+
+```cmd
+.venv\Scripts\activate
+```
+
+### 5. Instale as dependências
+
+```bash
+pip install -r requirements.txt
+```
+
+### 6. Execute o notebook
+
+Abra:
+>>>>>>> 81e80b9a6a6cf8682f65d0619458de9fba6343da
 
 ```text
 notebooks/tech_challenge_fase1.ipynb
 ```
 
+<<<<<<< HEAD
 Ele reúne o processo completo de análise exploratória, processamento, treino, comparação de modelos e avaliação das métricas.
 
 ---
@@ -346,6 +534,31 @@ app/diagnostic/
 - O objetivo é acadêmico e experimental.
 - Os modelos não devem ser usados como diagnóstico clínico real.
 - O app cliente depende da API estar em execução localmente para funcionar corretamente.
+=======
+O notebook pode ser executado utilizando Jupyter Notebook, JupyterLab ou Google Colab.
+
+---
+
+## 📓 Notebook
+
+O notebook principal está disponível em:
+
+```text
+notebooks/tech_challenge_fase1.ipynb
+```
+
+Ele contém todo o processo de exploração, preparação dos dados, treinamento, avaliação e comparação dos modelos.
+
+---
+
+## ⚠️ Limitações
+
+Os resultados apresentados são referentes ao dataset e à metodologia de divisão de treino e teste utilizada no projeto.
+
+Este trabalho possui **finalidade acadêmica** e não representa um modelo clínico validado.
+
+Os resultados não devem ser utilizados para diagnóstico ou tomada de decisão médica.
+>>>>>>> 81e80b9a6a6cf8682f65d0619458de9fba6343da
 
 ---
 
@@ -356,6 +569,7 @@ app/diagnostic/
 - [Heloysa Arruda](https://github.com/heloysasa)
 - [Kauanny Felix](https://github.com/KakauFelix)
 - [Nicanor Bondarenco](https://github.com/NicoBondarenco)
+<<<<<<< HEAD
 
 ---
 
@@ -376,3 +590,5 @@ Em seguida, acesse:
 - http://127.0.0.1:8000/redoc
 
 
+=======
+>>>>>>> 81e80b9a6a6cf8682f65d0619458de9fba6343da
