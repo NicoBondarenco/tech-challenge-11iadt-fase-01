@@ -7,8 +7,10 @@ from pathlib import Path
 
 
 try:
+    from .config import MIN_RECALL_TARGET, clinical_cost, save_threshold
     from .dataset import ROOT
 except ImportError:
+    from config import MIN_RECALL_TARGET, clinical_cost, save_threshold
     from dataset import ROOT
 
 
@@ -60,11 +62,12 @@ def metrics_for_threshold(predictions: list[dict[str, float | int | str]], thres
         "false_positives": fp,
         "false_negatives": fn,
         "true_positives": tp,
+        "clinical_cost": clinical_cost(fn, fp),
     }
 
 
 def analyze_thresholds(predictions: list[dict[str, float | int | str]]) -> list[dict[str, float | int]]:
-    return [metrics_for_threshold(predictions, threshold / 100) for threshold in range(30, 81)]
+    return [metrics_for_threshold(predictions, threshold / 100) for threshold in range(5, 96)]
 
 
 def write_results(path: Path, rows: list[dict[str, float | int]]) -> None:
@@ -75,22 +78,25 @@ def write_results(path: Path, rows: list[dict[str, float | int]]) -> None:
         writer.writerows(rows)
 
 
-def choose_recommended_threshold(
+def choose_by_clinical_cost(rows: list[dict[str, float | int]]) -> dict[str, float | int]:
+    return min(rows, key=lambda row: (int(row["clinical_cost"]), -float(row["recall_malignant"])))
+
+
+def choose_by_min_recall(
     rows: list[dict[str, float | int]],
-    min_recall: float = 0.85,
+    min_recall: float = MIN_RECALL_TARGET,
 ) -> dict[str, float | int] | None:
     candidates = [row for row in rows if float(row["recall_malignant"]) >= min_recall]
     if not candidates:
         return None
-    return max(
-        candidates,
-        key=lambda row: (
-            float(row["specificity_benign"]),
-            float(row["f1_score"]),
-            -int(row["false_positives"]),
-            float(row["threshold"]),
-        ),
-    )
+    return max(candidates, key=lambda row: float(row["threshold"]))
+
+
+def choose_recommended_threshold(
+    rows: list[dict[str, float | int]],
+    min_recall: float = MIN_RECALL_TARGET,
+) -> dict[str, float | int] | None:
+    return choose_by_clinical_cost(rows)
 
 
 def row_for_threshold(rows: list[dict[str, float | int]], threshold: float) -> dict[str, float | int]:
@@ -114,7 +120,13 @@ def save_plot(path: Path, rows: list[dict[str, float | int]]) -> None:
     ax.plot(thresholds, [float(row["precision_malignant"]) for row in rows], label="Precision maligno")
     ax.plot(thresholds, [float(row["specificity_benign"]) for row in rows], label="Specificity benigno")
     ax.plot(thresholds, [float(row["f1_score"]) for row in rows], label="F1-score")
-    ax.axvline(0.5, color="gray", linestyle="--", linewidth=1, label="Threshold atual 0.50")
+    custos = [int(row["clinical_cost"]) for row in rows]
+    custo_max = max(custos) or 1
+    ax.plot(thresholds, [c / custo_max for c in custos], label="Custo clinico (normalizado)", linewidth=2)
+    melhor = min(rows, key=lambda row: int(row["clinical_cost"]))
+    ax.axvline(0.5, color="gray", linestyle="--", linewidth=1, label="Threshold padrao 0.50")
+    ax.axvline(float(melhor["threshold"]), color="crimson", linestyle="--", linewidth=1,
+               label=f"Minimo custo {float(melhor['threshold']):.2f}")
     ax.set_xlabel("Threshold")
     ax.set_ylabel("Metrica")
     ax.set_ylim(0, 1.05)
@@ -165,7 +177,11 @@ def main() -> None:
     parser.add_argument("--predictions", default=str(DEFAULT_INPUT))
     parser.add_argument("--output", default=str(DEFAULT_OUTPUT))
     parser.add_argument("--plot", default=str(DEFAULT_PLOT))
-    parser.add_argument("--min-recall", type=float, default=0.85)
+    parser.add_argument("--min-recall", type=float, default=MIN_RECALL_TARGET)
+    parser.add_argument("--criterio", choices=["custo", "recall"], default="custo",
+                        help="Criterio para o threshold gravado com --save.")
+    parser.add_argument("--save", action="store_true",
+                        help="Grava o threshold escolhido em models/threshold.json.")
     args = parser.parse_args()
 
     predictions_path = Path(args.predictions)
@@ -180,8 +196,41 @@ def main() -> None:
     save_plot(Path(args.plot), rows)
 
     current = row_for_threshold(rows, 0.5)
-    recommended = choose_recommended_threshold(rows, min_recall=args.min_recall)
-    print_comparison(current, recommended)
+    por_custo = choose_by_clinical_cost(rows)
+    por_recall = choose_by_min_recall(rows, min_recall=args.min_recall)
+
+    print_comparison(current, por_custo)
+
+    print("\nCriterios comparados")
+    print(f"{'Criterio':<26} {'Thr':>6} {'Recall':>8} {'Prec':>8} {'FN':>5} {'FP':>5} {'Custo':>8}")
+    print("-" * 70)
+    linhas = [("Padrao 0.50", current), ("Minimo custo clinico", por_custo)]
+    if por_recall is not None:
+        linhas.append((f"Recall >= {args.min_recall:.2f}", por_recall))
+    for nome, linha in linhas:
+        print(f"{nome:<26} {float(linha['threshold']):>6.2f} "
+              f"{float(linha['recall_malignant']):>8.3f} {float(linha['precision_malignant']):>8.3f} "
+              f"{int(linha['false_negatives']):>5} {int(linha['false_positives']):>5} "
+              f"{int(linha['clinical_cost']):>8}")
+
+    if not args.save:
+        print("\nArtefato nao gravado (use --save para persistir o threshold escolhido).")
+    else:
+        escolhido = por_recall if args.criterio == "recall" and por_recall else por_custo
+        caminho = save_threshold(
+            float(escolhido["threshold"]),
+            metadata={
+                "criterio": args.criterio,
+                "split_de_ajuste": "validation",
+                "recall_maligno": float(escolhido["recall_malignant"]),
+                "precision_maligno": float(escolhido["precision_malignant"]),
+                "falsos_negativos": int(escolhido["false_negatives"]),
+                "falsos_positivos": int(escolhido["false_positives"]),
+                "custo_clinico": int(escolhido["clinical_cost"]),
+            },
+        )
+        print(f"\nThreshold gravado em: {caminho}")
+
     print(f"\nResultados salvos em: {args.output}")
     print(f"Grafico salvo em: {args.plot}")
     print("Observacao: o conjunto de teste nao foi usado para escolher threshold.")

@@ -68,9 +68,48 @@ def compute_grad_cam(
     return (heatmap / max_value).numpy()
 
 
-def overlay_heatmap(image_path: str | Path, heatmap: np.ndarray, alpha: float = 0.35) -> Image.Image:
+def unpad_heatmap(
+    heatmap: np.ndarray,
+    original_size: tuple[int, int],
+    image_size: tuple[int, int] = DEFAULT_IMAGE_SIZE,
+) -> np.ndarray:
+    largura_original, altura_original = original_size
+    altura_alvo, largura_alvo = image_size
+
+    escala = min(altura_alvo / altura_original, largura_alvo / largura_original)
+    altura_util = altura_original * escala
+    largura_util = largura_original * escala
+
+    offset_y = (altura_alvo - altura_util) / 2.0
+    offset_x = (largura_alvo - largura_util) / 2.0
+
+    ampliado = np.asarray(
+        Image.fromarray(np.float32(heatmap)).resize(
+            (largura_alvo, altura_alvo), Image.Resampling.BILINEAR
+        )
+    )
+
+    inicio_y = int(round(offset_y))
+    fim_y = int(round(offset_y + altura_util))
+    inicio_x = int(round(offset_x))
+    fim_x = int(round(offset_x + largura_util))
+
+    recorte = ampliado[
+        max(inicio_y, 0) : min(fim_y, altura_alvo),
+        max(inicio_x, 0) : min(fim_x, largura_alvo),
+    ]
+    return recorte if recorte.size else ampliado
+
+
+def overlay_heatmap(
+    image_path: str | Path,
+    heatmap: np.ndarray,
+    alpha: float = 0.35,
+    image_size: tuple[int, int] = DEFAULT_IMAGE_SIZE,
+) -> Image.Image:
     original = Image.open(image_path).convert("RGB")
-    heatmap_image = Image.fromarray(np.uint8(heatmap * 255)).resize(original.size, Image.Resampling.BILINEAR)
+    alinhado = unpad_heatmap(heatmap, original.size, image_size=image_size)
+    heatmap_image = Image.fromarray(np.uint8(alinhado * 255)).resize(original.size, Image.Resampling.BILINEAR)
     colored = plt.get_cmap("jet")(np.array(heatmap_image) / 255.0)[:, :, :3]
     colored_image = Image.fromarray(np.uint8(colored * 255))
     return Image.blend(original, colored_image, alpha=alpha)

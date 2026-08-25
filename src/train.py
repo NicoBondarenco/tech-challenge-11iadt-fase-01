@@ -11,11 +11,11 @@ from pathlib import Path
 import tensorflow as tf
 
 try:
-    from .dataset import DATA_DIR, ROOT, build_master_dataset, summarize, _write_csv
+    from .dataset import DATA_DIR, ROOT, build_master_dataset, resolve_repo_path, summarize, _write_csv
     from .model import build_mobilenetv2_classifier, compile_binary_classifier
     from .preprocessing import DEFAULT_IMAGE_SIZE, make_dataset
 except ImportError:
-    from dataset import DATA_DIR, ROOT, build_master_dataset, summarize, _write_csv
+    from dataset import DATA_DIR, ROOT, build_master_dataset, resolve_repo_path, summarize, _write_csv
     from model import build_mobilenetv2_classifier, compile_binary_classifier
     from preprocessing import DEFAULT_IMAGE_SIZE, make_dataset
 
@@ -118,24 +118,33 @@ def main() -> None:
     parser.add_argument("--learning-rate", type=float, default=1e-4)
     parser.add_argument("--monitor", default="val_roc_auc")
     parser.add_argument("--monitor-mode", choices=["min", "max"], default="max")
-    parser.add_argument("--patience", type=int, default=5)
-    parser.add_argument("--fine-tune-epochs", type=int, default=0)
+    parser.add_argument("--patience", type=int, default=8)
+    parser.add_argument("--fine-tune-epochs", type=int, default=15)
     parser.add_argument("--fine-tune-at", type=int, default=100)
     parser.add_argument("--fine-tune-learning-rate", type=float, default=1e-5)
     parser.add_argument("--validation-size", type=float, default=0.2)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--abnormality", default=None,
+                        help="Treina so em 'mass' ou 'calcification'. Omitido = ambos.")
     parser.add_argument("--image-size", type=int, nargs=2, default=list(DEFAULT_IMAGE_SIZE))
     args = parser.parse_args()
 
     tf.keras.utils.set_random_seed(args.seed)
     dataset_path = Path(args.dataset)
     rows = ensure_master_dataset(dataset_path, args.image_type, args.validation_size, args.seed)
+    if args.abnormality:
+        alvo = args.abnormality.strip().lower()
+        rows = [row for row in rows if (row.get("abnormality_type") or "").strip().lower() == alvo]
+        if not rows:
+            raise ValueError(f"Nenhuma linha para abnormality={args.abnormality}.")
+        print(f"Treinando somente em '{alvo}': {len(rows)} imagens.")
+
     train_rows = split_rows(rows, "train")
     validation_rows = split_rows(rows, "validation")
 
     image_size = tuple(args.image_size)
     train_ds = make_dataset(
-        [row["image_path"] for row in train_rows],
+        [resolve_repo_path(row["image_path"]) for row in train_rows],
         [int(row["label"]) for row in train_rows],
         batch_size=args.batch_size,
         image_size=image_size,
@@ -143,7 +152,7 @@ def main() -> None:
         augment=True,
     )
     validation_ds = make_dataset(
-        [row["image_path"] for row in validation_rows],
+        [resolve_repo_path(row["image_path"]) for row in validation_rows],
         [int(row["label"]) for row in validation_rows],
         batch_size=args.batch_size,
         image_size=image_size,
@@ -152,9 +161,10 @@ def main() -> None:
     model = build_mobilenetv2_classifier(image_size=image_size, learning_rate=args.learning_rate, freeze_base=True)
     model_dir = Path(args.model_dir)
     model_dir.mkdir(parents=True, exist_ok=True)
-    checkpoint_path = model_dir / "mobilenetv2_cbis_ddsm_best.keras"
-    fine_tune_checkpoint_path = model_dir / "mobilenetv2_cbis_ddsm_fine_tune_best.keras"
-    training_log_path = model_dir / "training_log.csv"
+    sufixo = f"_{args.abnormality.strip().lower()}" if args.abnormality else ""
+    checkpoint_path = model_dir / f"mobilenetv2_cbis_ddsm{sufixo}_best.keras"
+    fine_tune_checkpoint_path = model_dir / f"mobilenetv2_cbis_ddsm{sufixo}_fine_tune_best.keras"
+    training_log_path = model_dir / f"training_log{sufixo}.csv"
 
     print("Fase 1: treinando somente o cabecalho de classificacao.")
     history = model.fit(
@@ -180,6 +190,11 @@ def main() -> None:
         base_model.trainable = True
         for layer in base_model.layers[: args.fine_tune_at]:
             layer.trainable = False
+        for layer in base_model.layers:
+            if isinstance(layer, tf.keras.layers.BatchNormalization):
+                layer.trainable = False
+        treinaveis = sum(1 for layer in base_model.layers if layer.trainable)
+        print(f"Camadas destravadas na base: {treinaveis} de {len(base_model.layers)}")
         compile_binary_classifier(model, args.fine_tune_learning_rate)
         fine_tune_history = model.fit(
             train_ds,
@@ -204,10 +219,10 @@ def main() -> None:
         else:
             print(f"Fine-tuning nao superou a Fase 1 em {args.monitor}; melhor global preservado.")
 
-    history_path = model_dir / "training_history.json"
+    history_path = model_dir / f"training_history{sufixo}.json"
     with history_path.open("w", encoding="utf-8") as handle:
         json.dump(merge_histories(*histories), handle, indent=2)
-    model.save(model_dir / "mobilenetv2_cbis_ddsm_last.keras")
+    model.save(model_dir / f"mobilenetv2_cbis_ddsm{sufixo}_last.keras")
     print(f"Melhor modelo salvo em: {checkpoint_path}")
     print(f"Historico salvo em: {history_path}")
 

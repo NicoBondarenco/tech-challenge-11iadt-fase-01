@@ -1,0 +1,10 @@
+{
+  "threshold": 0.45,
+  "criterio": "recall",
+  "split_de_ajuste": "validation",
+  "recall_maligno": 0.9563318777292577,
+  "precision_maligno": 0.4910313901345291,
+  "falsos_negativos": 10,
+  "falsos_positivos": 227,
+  "custo_clinico": 1227
+}

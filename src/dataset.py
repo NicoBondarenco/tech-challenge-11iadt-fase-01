@@ -144,6 +144,30 @@ def resolve_local_image(
     return None
 
 
+def to_repo_relative(path: str | Path | None) -> str:
+    if path is None:
+        return ""
+
+    texto = str(path).replace("\\", "/")
+
+    marcador = f"/{ROOT.name}/"
+    if marcador in texto:
+        return texto.split(marcador, 1)[1]
+
+    if "/data/" in texto:
+        return "data/" + texto.split("/data/", 1)[1]
+
+    try:
+        return Path(texto).resolve().relative_to(ROOT.resolve()).as_posix()
+    except (ValueError, OSError):
+        return Path(texto).as_posix()
+
+
+def resolve_repo_path(path: str | Path) -> str:
+    caminho = Path(str(path))
+    return str(caminho if caminho.is_absolute() else (ROOT / caminho))
+
+
 def load_dicom_images(data_dir: Path = DATA_DIR, img_dir: Path = IMG_DIR) -> list[DicomImage]:
     image_index = physical_image_index(img_dir)
     rows = _read_csv(data_dir / "dicom_info.csv")
@@ -211,7 +235,7 @@ def build_master_dataset(
         image = resolved[0]
         rows.append(
             {
-                "image_path": image.local_image_path,
+                "image_path": to_repo_relative(image.local_image_path),
                 "patient_id": case.get("patient_id", ""),
                 "pathology": pathology,
                 "label": PATHOLOGY_TO_LABEL[pathology],
