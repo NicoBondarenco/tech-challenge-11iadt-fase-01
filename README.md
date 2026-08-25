@@ -1,22 +1,22 @@
 # 🧬 Tech Challenge — Fase 1
 ## Análise e Classificação de Câncer de Mama
 
-Projeto desenvolvido como parte do **Tech Challenge** da Pós-Graduação em IA para Devs da FIAP, com foco em **Análise Exploratória de Dados (EDA)** e **Machine Learning para classificação de câncer de mama**.
+Projeto desenvolvido como parte do **Tech Challenge** da Pós-Graduação em IA para Devs da FIAP, turma 11IADT, com foco em **Análise Exploratória de Dados (EDA)**, **Machine Learning** e entrega de uma solução completa para predição de câncer de mama.
 
-O projeto utiliza o dataset **Wisconsin Diagnostic Breast Cancer (WDBC)** para explorar, preparar e modelar dados relacionados à classificação de tumores como **benignos** ou **malignos**.
+O projeto utiliza o dataset **Wisconsin Diagnostic Breast Cancer (WDBC)** para explorar, preparar e modelar dados relacionados à classificação de tumores como **benignos** ou **malignos**. A solução inclui notebook de análise, modelos treinados, uma API em **FastAPI** e um cliente em **Swift / SwiftUI**.
 
-> ⚠️ **Aviso:** este projeto possui finalidade acadêmica e experimental. Os modelos desenvolvidos não constituem uma ferramenta de diagnóstico médico.
+> ⚠️ **Aviso académico:** este projeto tem finalidade educacional e experimental. Os modelos desenvolvidos não substituem diagnóstico médico profissional.
 
 ---
 
 ## 🎯 Objetivo
 
-O objetivo deste projeto é desenvolver e comparar modelos de Machine Learning capazes de classificar amostras em duas categorias:
+O objetivo do projeto é desenvolver e comparar modelos de Machine Learning capazes de classificar amostras em duas categorias:
 
 - **B — Benigno**
 - **M — Maligno**
 
-O notebook percorre as principais etapas de um projeto de Machine Learning, incluindo:
+As etapas principais incluem:
 
 - exploração dos dados;
 - análise da qualidade dos dados;
@@ -27,8 +27,7 @@ O notebook percorre as principais etapas de um projeto de Machine Learning, incl
 - avaliação das métricas;
 - comparação dos resultados;
 - análise da matriz de confusão;
-- experimentação com redução de dimensionalidade utilizando PCA.
-
+- experimentação com redução de dimensionalidade usando PCA.
 
 ---
 
@@ -39,12 +38,17 @@ O projeto utiliza o dataset **Wisconsin Diagnostic Breast Cancer (WDBC)**.
 Arquivo utilizado:
 
 ```text
-breast-cancer-wisconsin-data.csv
+data/breast-cancer-wisconsin-data.csv
 ```
 
 Fonte: [https://www.kaggle.com/datasets/uciml/breast-cancer-wisconsin-data/data](https://www.kaggle.com/datasets/uciml/breast-cancer-wisconsin-data/data)
 
-O notebook realiza o carregamento do dataset utilizando o Pandas e conduz a análise exploratória antes das etapas de modelagem.
+Durante o pré-processamento, colunas como `id` e `Unnamed: 32` são removidas. A variável `diagnosis` é convertida para representação binária:
+
+```text
+B → 0
+M → 1
+```
 
 ---
 
@@ -61,31 +65,7 @@ A análise contempla:
 - análise das variáveis numéricas;
 - visualizações e correlações.
 
-Durante o pré-processamento, as colunas `id` e `Unnamed: 32` são removidas.
-
-A variável `diagnosis` é convertida para representação binária:
-
-```text
-B → 0
-M → 1
-```
-
-O notebook utiliza `LabelEncoder` para realizar essa transformação. :contentReference[oaicite:3]{index=3}
-
----
-
-## 🧹 Pré-processamento
-
-As principais etapas de preparação dos dados são:
-
-1. Remoção de colunas desnecessárias;
-2. Codificação da variável alvo;
-3. Separação entre features (`X`) e variável alvo (`y`);
-4. Divisão entre treino e teste;
-5. Padronização das features;
-6. Experimentação com diferentes estratégias de escalonamento.
-
-A divisão dos dados utiliza:
+A divisão dos dados foi feita com:
 
 ```python
 train_test_split(
@@ -97,33 +77,49 @@ train_test_split(
 )
 ```
 
-Assim, são utilizados 80% dos dados para treinamento e 20% para teste, preservando a proporção das classes.
+Assim, 80% dos dados são usados para treino e 20% para teste, preservando a proporção das classes.
 
 ---
 
-## 🤖 Modelos
+## 🧹 Pré-processamento
+
+As principais etapas de preparação dos dados são:
+
+1. remoção de colunas desnecessárias;
+2. codificação da variável alvo;
+3. separação entre `X` e `y`;
+4. divisão entre treino e teste;
+5. padronização das features;
+6. experimentação com diferentes estratégias de escalonamento.
+
+A solução compara principalmente:
+
+- `StandardScaler`
+- `RobustScaler`
+- `PCA` após escalonamento
+
+---
+
+## 🤖 Modelos Avaliados
 
 Foram avaliados três algoritmos de classificação:
 
 ### Logistic Regression
-
-Modelo de classificação linear utilizado como baseline para comparação.
+Modelo de classificação linear utilizado como baseline.
 
 ### K-Nearest Neighbors (KNN)
-
 Algoritmo baseado na proximidade entre as observações.
 
 ### Random Forest
-
 Modelo baseado em um conjunto de árvores de decisão.
 
-Os três modelos são implementados utilizando o `scikit-learn`. 
+Os modelos são implementados com `scikit-learn`.
 
 ---
 
 ## 📏 Métricas
 
-Os modelos foram avaliados utilizando:
+Os modelos foram avaliados por:
 
 - Accuracy
 - Precision
@@ -133,35 +129,11 @@ Os modelos foram avaliados utilizando:
 - Matriz de Confusão
 - Classification Report
 
-As métricas são calculadas utilizando ferramentas do módulo `sklearn.metrics`.
-
----
-
-## 🧪 StandardScaler, RobustScaler e PCA
-
-O projeto também compara diferentes estratégias de preparação dos dados.
-
-A abordagem principal utiliza `StandardScaler`.
-
-Também foi testada uma abordagem utilizando:
-
-```text
-RobustScaler
-      ↓
-PCA
-      ↓
-Modelo de classificação
-```
-
-O objetivo é analisar o impacto do escalonamento robusto e da redução de dimensionalidade sobre o desempenho dos modelos.
-
 ---
 
 ## 📈 Resultados
 
-Os resultados apresentados no notebook indicam um desempenho elevado dos modelos avaliados. Entre eles, o Random Forest sem PCA apresentou os melhores resultados e, por isso, foi selecionado como o modelo principal para dar continuidade às análises e aos desenvolvimentos.
-
-O **Random Forest sem PCA** apresentou:
+Os resultados do notebook indicam desempenho muito alto para os modelos avaliados, com destaque para o **Random Forest sem PCA**.
 
 | Métrica | Resultado |
 |---|---:|
@@ -171,7 +143,7 @@ O **Random Forest sem PCA** apresentou:
 | F1 Score | 96,30% |
 | ROC-AUC | 99,29% |
 
-A matriz de confusão do Random Forest apresentou:
+Matriz de confusão do modelo principal:
 
 |  | Predito B | Predito M |
 |---|---:|---:|
@@ -189,13 +161,16 @@ Isso corresponde a:
 
 ## 🛠️ Tecnologias
 
-O projeto foi desenvolvido em **Python** utilizando:
+O projeto foi desenvolvido em **Python** e inclui:
 
 - [NumPy](https://numpy.org/)
 - [Pandas](https://pandas.pydata.org/)
 - [Matplotlib](https://matplotlib.org/)
 - [Seaborn](https://seaborn.pydata.org/)
 - [Scikit-learn](https://scikit-learn.org/)
+- [FastAPI](https://fastapi.tiangolo.com/)
+- [Uvicorn](https://www.uvicorn.org/)
+- [Swift / SwiftUI](https://developer.apple.com/xcode/swiftui/)
 
 ---
 
@@ -203,93 +178,174 @@ O projeto foi desenvolvido em **Python** utilizando:
 
 ```text
 tech-challenge-11iadt-fase-01/
-│
+├── LICENSE
+├── README.md
+├── requirements.txt
+├── app/
+│   └── diagnostic/
+│       └── diagnostic.xcodeproj/
+├── data/
+│   └── breast-cancer-wisconsin-data.csv
+├── models/                       # modelos treinados (.pkl)
 ├── notebooks/
 │   └── tech_challenge_fase1.ipynb
-├── datasets/
-│   └── breast-cancer-wisconsin-data.csv
-│
-├── README.md
-│
-└── requirements.txt
-...
+├── src/
+│   ├── __init__.py
+│   ├── data_prep.py
+│   ├── main.py                   # API FastAPI
+│   └── model.py
+├── tests/
+│   └── test_main.py
+└── .venv/                       # ambiente virtual local (opcional)
 ```
 
 ---
 
-## 🚀 Como executar
+## 🧰 Como configurar o ambiente
 
-### 1. Clone o repositório
+### 1. Pré-requisitos
+
+- Python 3.10 ou superior
+- `pip` instalado
+- Git
+- Opcional: Xcode 14+ para executar o app SwiftUI
+
+### 2. Clone o repositório
 
 ```bash
 git clone https://github.com/NicoBondarenco/tech-challenge-11iadt-fase-01.git
-```
-
-### 2. Entre na pasta
-
-```bash
 cd tech-challenge-11iadt-fase-01
 ```
 
-### 3. Crie um ambiente virtual
+### 3. Crie e ative um ambiente virtual
 
-No Windows:
+No macOS/Linux:
 
 ```bash
 python -m venv .venv
+source .venv/bin/activate
 ```
 
-### 4. Ative o ambiente virtual
-
-PowerShell:
+No Windows (PowerShell):
 
 ```powershell
-.venv\Scripts\Activate.ps1
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 ```
 
-Caso esteja utilizando o CMD:
+No Windows (CMD):
 
 ```cmd
-.venv\Scripts\activate
+python -m venv .venv
+.venv\Scripts\activate.bat
 ```
 
-### 5. Instale as dependências
+### 4. Instale as dependências
 
 ```bash
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 6. Execute o notebook
+---
 
-Abra:
+## 🚀 Executando a API FastAPI
 
-```text
-notebooks/tech_challenge_fase1.ipynb
+A API está localizada em `src/main.py` e utiliza modelos salvos na pasta `models/`.
+
+### Opção 1: FastAPI em modo de desenvolvimento
+
+```bash
+fastapi dev src/main.py
 ```
 
-O notebook pode ser executado utilizando Jupyter Notebook, JupyterLab ou Google Colab.
+### Opção 2: Uvicorn
+
+```bash
+uvicorn src.main:app --reload --port 8000
+```
+
+A aplicação ficará disponível em:
+
+- http://127.0.0.1:8000
+
+### Documentação interativa
+
+- Swagger UI: http://127.0.0.1:8000/docs
+- ReDoc: http://127.0.0.1:8000/redoc
+
+---
+
+## 🔍 Endpoints principais
+
+- `GET /` — mensagem de boas-vindas
+- `GET /models` — lista os modelos disponíveis
+- `GET /predict` — predição genérica, com `model_name` e as 30 features do dataset
+- `GET /predict/{model_name}` — rota específica por modelo
+
+Exemplos de modelos disponíveis:
+
+- `random_forest`
+- `random_forest_pca`
+- `knn`
+- `knn_pca`
+- `logistic_regression`
+- `logistic_regression_pca`
+
+### Exemplo de chamada via curl
+
+```bash
+curl -X 'GET' \
+  'http://127.0.0.1:8000/predict/random_forest?radius_mean=14.22&texture_mean=23.12&perimeter_mean=92.87&area_mean=620.5&smoothness_mean=0.1039&compactness_mean=0.1101&concavity_mean=0.07215&concave%20points_mean=0.04879&symmetry_mean=0.1794&fractal_dimension_mean=0.05964&radius_se=0.3456&texture_se=1.234&perimeter_se=2.456&area_se=28.5&smoothness_se=0.0065&compactness_se=0.025&concavity_se=0.035&concave%20points_se=0.012&symmetry_se=0.018&fractal_dimension_se=0.0035&radius_worst=15.89&texture_worst=30.45&perimeter_worst=105.2&area_worst=780.1&smoothness_worst=0.141&compactness_worst=0.28&concavity_worst=0.25&concave%20points_worst=0.11&symmetry_worst=0.31&fractal_dimension_worst=0.089' \
+  -H 'accept: application/json'
+```
+
+---
+
+## 🧪 Executando os testes
+
+Para rodar a suíte de testes automatizados do projeto:
+
+```bash
+pytest
+```
 
 ---
 
 ## 📓 Notebook
 
-O notebook principal está disponível em:
+O notebook principal está em:
 
 ```text
 notebooks/tech_challenge_fase1.ipynb
 ```
 
-Ele contém todo o processo de exploração, preparação dos dados, treinamento, avaliação e comparação dos modelos.
+Ele reúne o processo completo de análise exploratória, processamento, treino, comparação de modelos e avaliação das métricas.
 
 ---
 
-## ⚠️ Limitações
+## 📱 Aplicativo SwiftUI (`diagnostic`)
 
-Os resultados apresentados são referentes ao dataset e à metodologia de divisão de treino e teste utilizada no projeto.
+O projeto também inclui um cliente em SwiftUI em:
 
-Este trabalho possui **finalidade acadêmica** e não representa um modelo clínico validado.
+```text
+app/diagnostic/
+```
 
-Os resultados não devem ser utilizados para diagnóstico ou tomada de decisão médica.
+### Como rodar o app
+
+1. Abra o arquivo `app/diagnostic/diagnostic.xcodeproj` no Xcode.
+2. Verifique se a `baseURL` em `NetworkManager.swift` aponta para a API correta (normalmente `http://127.0.0.1:8000`).
+3. Execute o projeto no simulador ou em um dispositivo.
+
+---
+
+## ⚠️ Limitações e observações
+
+- Os resultados refletem o dataset e a metodologia utilizada neste projeto.
+- O objetivo é acadêmico e experimental.
+- Os modelos não devem ser usados como diagnóstico clínico real.
+- O app cliente depende da API estar em execução localmente para funcionar corretamente.
 
 ---
 
@@ -300,3 +356,23 @@ Os resultados não devem ser utilizados para diagnóstico ou tomada de decisão 
 - [Heloysa Arruda](https://github.com/heloysasa)
 - [Kauanny Felix](https://github.com/KakauFelix)
 - [Nicanor Bondarenco](https://github.com/NicoBondarenco)
+
+---
+
+## ✅ Resumo rápido de execução
+
+```bash
+git clone https://github.com/NicoBondarenco/tech-challenge-11iadt-fase-01.git
+cd tech-challenge-11iadt-fase-01
+python -m venv .venv
+source .venv/bin/activate  # ou .\.venv\Scripts\Activate.ps1 no Windows
+pip install -r requirements.txt
+fastapi dev src/main.py
+```
+
+Em seguida, acesse:
+
+- http://127.0.0.1:8000/docs
+- http://127.0.0.1:8000/redoc
+
+
