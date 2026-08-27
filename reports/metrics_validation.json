@@ -1,0 +1,47 @@
+{
+  "split": "validation",
+  "threshold": 0.58,
+  "accuracy": 0.6309523809523809,
+  "precision": 0.5158730158730159,
+  "recall_sensitivity_malignant": 0.851528384279476,
+  "f1_score": 0.642504118616145,
+  "roc_auc": 0.7321769592876866,
+  "confusion_matrix": [
+    [
+      176,
+      183
+    ],
+    [
+      34,
+      195
+    ]
+  ],
+  "classification_report": {
+    "BENIGN": {
+      "precision": 0.8380952380952381,
+      "recall": 0.49025069637883006,
+      "f1-score": 0.6186291739894552,
+      "support": 359.0
+    },
+    "MALIGNANT": {
+      "precision": 0.5158730158730159,
+      "recall": 0.851528384279476,
+      "f1-score": 0.642504118616145,
+      "support": 229.0
+    },
+    "accuracy": 0.6309523809523809,
+    "macro avg": {
+      "precision": 0.676984126984127,
+      "recall": 0.670889540329153,
+      "f1-score": 0.6305666463028001,
+      "support": 588.0
+    },
+    "weighted avg": {
+      "precision": 0.7126039304610733,
+      "recall": 0.6309523809523809,
+      "f1-score": 0.6279274092267204,
+      "support": 588.0
+    }
+  },
+  "false_negatives_note": "Falso negativo = imagem maligna classificada como benigna."
+}
