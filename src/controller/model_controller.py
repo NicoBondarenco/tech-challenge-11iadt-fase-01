@@ -95,7 +95,9 @@ def _create_model_endpoint(model_name: str):
             symmetry_worst: float = Query(..., description="Pior simetria"),
             fractal_dimension_worst: float = Query(..., description="Pior dimensão fractal"),
     ):
-        return _predict_feature_values(model_name, **locals())
+        feature_values = locals().copy()
+        feature_values.pop("model_name", None)
+        return _predict_feature_values(model_name, **feature_values)
 
     endpoint.__name__ = f"predict_{model_name}"
     return endpoint
