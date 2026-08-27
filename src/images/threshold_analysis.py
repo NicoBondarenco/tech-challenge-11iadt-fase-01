@@ -187,7 +187,7 @@ def main() -> None:
     predictions_path = Path(args.predictions)
     if not predictions_path.exists():
         raise FileNotFoundError(
-            f"Arquivo nao encontrado: {predictions_path}. Execute primeiro: python -m src.evaluate --split validation"
+            f"Arquivo nao encontrado: {predictions_path}. Execute primeiro: python -m src.images.evaluate --split validation"
         )
 
     predictions = read_predictions(predictions_path)

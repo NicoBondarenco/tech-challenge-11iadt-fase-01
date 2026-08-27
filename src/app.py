@@ -9,15 +9,15 @@ import matplotlib.pyplot as plt
 import streamlit as st
 
 try:
-    from .config import DEFAULT_CLASSIFICATION_THRESHOLD
-    from .dataset import ROOT
-    from .gradcam import compute_grad_cam, overlay_heatmap
-    from .inference import load_model, predict_with_model
+    from .images.config import DEFAULT_CLASSIFICATION_THRESHOLD
+    from .images.dataset import ROOT
+    from .images.gradcam import compute_grad_cam, overlay_heatmap
+    from .images.inference import load_model, predict_with_model
 except ImportError:
-    from config import DEFAULT_CLASSIFICATION_THRESHOLD
-    from dataset import ROOT
-    from gradcam import compute_grad_cam, overlay_heatmap
-    from inference import load_model, predict_with_model
+    from images.config import DEFAULT_CLASSIFICATION_THRESHOLD
+    from images.dataset import ROOT
+    from images.gradcam import compute_grad_cam, overlay_heatmap
+    from images.inference import load_model, predict_with_model
 
 
 DEFAULT_MODEL_PATH = ROOT / "models" / "mobilenetv2_cbis_ddsm_best.keras"
@@ -154,7 +154,7 @@ def show_metrics_tab() -> None:
         with st.expander("Detalhes tecnicos do Classification Report"):
             st.json(metrics.get("classification_report", {}))
     else:
-        st.info(f"Metricas ainda nao encontradas em `{metrics_path}`. Execute `python -m src.evaluate --split {split}`.")
+        st.info(f"Metricas ainda nao encontradas em `{metrics_path}`. Execute `python -m src.images.evaluate --split {split}`.")
 
     if confusion_matrix_path.exists():
         left, center, right = st.columns([1, 2, 1])
