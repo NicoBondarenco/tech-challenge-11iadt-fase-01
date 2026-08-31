@@ -5,6 +5,8 @@ Projeto desenvolvido como parte do **Tech Challenge** da Pós-Graduação em IA 
 
 O projeto utiliza o dataset **Wisconsin Diagnostic Breast Cancer (WDBC)** para explorar, preparar e modelar dados relacionados à classificação de tumores como **benignos** ou **malignos**. A solução inclui notebook de análise, modelos treinados, uma API em **FastAPI** e um cliente em **Swift / SwiftUI**.
 
+O video explicativo pode ser visto em: https://www.youtube.com/watch?v=3r7pjXJOXdo
+
 > ⚠️ **Aviso académico:** este projeto tem finalidade educacional e experimental. Os modelos desenvolvidos não substituem diagnóstico médico profissional.
 
 ---
